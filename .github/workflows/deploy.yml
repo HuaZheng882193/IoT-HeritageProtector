@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -25,10 +25,20 @@ jobs:
         with:
           node-version: 20
           cache: "npm"
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
       - name: Install dependencies
         run: npm install
       - name: Build
-        run: npm run build
+        run: |
+          npm run build > build.log 2>&1 || (
+            git config --global user.name "github-actions"
+            git config --global user.email "github-actions@github.com"
+            git add build.log
+            git commit -m "Upload build log"
+            git push
+            exit 1
+          )
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
