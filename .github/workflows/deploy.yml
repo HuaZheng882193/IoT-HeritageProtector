@@ -30,15 +30,8 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build
-        run: |
-          npm run build > build.log 2>&1 || (
-            git config --global user.name "github-actions"
-            git config --global user.email "github-actions@github.com"
-            git add build.log
-            git commit -m "Upload build log"
-            git push
-            exit 1
-          )
+        run: npm run build
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
